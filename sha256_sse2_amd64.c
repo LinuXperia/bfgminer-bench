@@ -64,7 +64,7 @@ bool scanhash_sse2_64(struct thr_info*thr, const unsigned char *pmidstate,
     __m128i m_4hash1[64] __attribute__ ((aligned (0x100)));
     __m128i offset;
     int i;
-
+	printf("inside scanhash_sse2_64 \n");
 	pdata += 64;
 
     /* For debugging */
@@ -121,7 +121,7 @@ bool scanhash_sse2_64(struct thr_info*thr, const unsigned char *pmidstate,
 		}
 	}
 
-        if (unlikely((nonce >= max_nonce) || thr->work_restart))
+        if (unlikely((nonce >= max_nonce))) // || thr->work_restart))
         {
 			*last_nonce = nonce;
 			return false;

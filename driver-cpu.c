@@ -842,10 +842,10 @@ static int64_t cpu_scanhash(struct thr_info *thr, struct work *work, int64_t max
 CPUSearch:
 	last_nonce = first_nonce;
 	rc = false;
-
+	printf("(re)starting hashing... \n");
 	/* scan nonces for a proof-of-work hash */
 	{
-		sha256_func func = sha256_funcs[opt_algo];
+		sha256_func func = (sha256_func)scanhash_sse2_64; // sha256_funcs[opt_algo];
 		rc = (*func)(
 			thr,
 			work->midstate,
@@ -861,14 +861,17 @@ CPUSearch:
 
 	/* if nonce found, submit work */
 	if (unlikely(rc)) {
+		printf("driver-cpu: found something! :)\n");
 		applog(LOG_DEBUG, "%"PRIpreprv" found something?", thr->cgpu->proc_repr);
-		submit_nonce(thr, work, le32toh(*(uint32_t*)&work->data[76]));
+		//submit_nonce(thr, work, le32toh(*(uint32_t*)&work->data[76]));
 		work->blk.nonce = last_nonce + 1;
 		goto CPUSearch;
 	}
 	else
-	if (unlikely(last_nonce == first_nonce))
+	if (unlikely(last_nonce == first_nonce)) {
+		printf("driver-cpu: not found anything :(\n");
 		return 0;
+	}
 
 	work->blk.nonce = last_nonce + 1;
 	return last_nonce - first_nonce + 1;

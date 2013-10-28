@@ -10159,7 +10159,8 @@ static void raise_fd_limits(void)
 extern void bfg_init_threadlocal();
 extern void stratumsrv_start();
 
-int main(int argc, char *argv[])
+#if 0
+int main_old(int argc, char *argv[])
 {
 	struct sigaction handler;
 	struct thr_info *thr;
@@ -10869,3 +10870,18 @@ retry:
 
 	return 0;
 }
+#endif
+
+int main(int argc, char *argv[])
+{
+	printf("starting my miner_bench main :)\n");
+
+	struct work *work = calloc(1, sizeof(struct work));
+	if (unlikely(!work))
+		quit(1, "Failed to calloc work in make_work");
+	
+	int64_t res = cpu_drv.scanhash(0,work, 32*1024*100);
+	printf("cpu_scanhash returned with: %d\n", res);
+	
+}
+
