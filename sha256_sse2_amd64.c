@@ -65,6 +65,7 @@ bool scanhash_sse2_64(struct thr_info*thr, const unsigned char *pmidstate,
     __m128i offset;
     int i;
 	printf("inside scanhash_sse2_64 \n");
+	printf("  called with: nonce %u, max_nonce %u\n", nonce, max_nonce);
 	pdata += 64;
 
     /* For debugging */

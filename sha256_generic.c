@@ -248,7 +248,7 @@ bool scanhash_c(struct thr_info*thr, const unsigned char *midstate, unsigned cha
 	uint32_t *hash32 = (uint32_t *) hash;
 	uint32_t *nonce = (uint32_t *)(data + 76);
 	unsigned long stat_ctr = 0;
-
+	printf("inside scanhash_c\n");
 	data += 64;
 
 	// Midstate and data are stored in little endian
@@ -271,7 +271,7 @@ bool scanhash_c(struct thr_info*thr, const unsigned char *midstate, unsigned cha
 			return true;
 		}
 
-		if ((n >= max_nonce) || thr->work_restart) {
+		if ((n >= max_nonce) ) { // || thr->work_restart) {
 			*nonce = htole32(n);
 			*last_nonce = n;
 			return false;

@@ -10871,7 +10871,7 @@ retry:
 	return 0;
 }
 #endif
-
+void my_print(char *data[], int length);
 int main(int argc, char *argv[])
 {
 	printf("starting my miner_bench main :)\n");
@@ -10879,9 +10879,38 @@ int main(int argc, char *argv[])
 	struct work *work = calloc(1, sizeof(struct work));
 	if (unlikely(!work))
 		quit(1, "Failed to calloc work in make_work");
-	
-	int64_t res = cpu_drv.scanhash(0,work, 32*1024*100);
+
+	unsigned char *data = work->data;
+	// ver
+	data[0] = 1;
+	// hashPrevBlock
+/*
+	hex2bin(&data[0+4], "81cd02ab7e569e8bcd9317e2fe99f2de44d49ab2b8851ba4a308000000000000", 32);
+	// hashMerkleRoot
+	hex2bin(&data[0+4+32], "e320b6c2fffc8d750423db8b1eb942ae710e951ed797f7affc8892b0f1fc122b", 32);
+	// time
+	hex2bin(&data[0+4+32+32], "c7f5d74d", 4);
+	// bits
+	hex2bin(&data[0+4+32+32+4], "f2b9441a", 4);
+*/
+	uint32_t correct_nonce = 2504433986;
+
+	work->blk.nonce = correct_nonce - 1000;
+	//calc_midstate(work);
+
+	my_print(data,80);
+
+	int64_t res = cpu_drv.scanhash(NULL,work, correct_nonce+ 1*1024*100);
 	printf("cpu_scanhash returned with: %d\n", res);
+	
+	uint32_t ver = 1;
 	
 }
 
+void my_print(char *data[], int length) {
+	printf("DEBUG: data = ");
+	for(int i=0; i<length; i++) {
+		printf("%2x", data[i]);
+	}
+	printf("\n");
+}
