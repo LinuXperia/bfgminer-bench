@@ -845,7 +845,8 @@ CPUSearch:
 	printf("(re)starting hashing... \n");
 	/* scan nonces for a proof-of-work hash */
 	{
-		sha256_func func = (sha256_func)scanhash_sse2_64; // sha256_funcs[opt_algo];
+//		sha256_func func = (sha256_func)scanhash_sse2_64; // sha256_funcs[opt_algo];
+		sha256_func func = (sha256_func)scanhash_c;
 		rc = (*func)(
 			thr,
 			work->midstate,

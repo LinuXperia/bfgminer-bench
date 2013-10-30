@@ -801,6 +801,7 @@ bool hash_target_check_v(const unsigned char *hash, const unsigned char *target)
 // In other words, on little endian platforms, every 4 bytes are in reverse order
 bool fulltest(const unsigned char *hash, const unsigned char *target)
 {
+	printf("fulltest called \n");
 	unsigned char hash2[32];
 	swap32tobe(hash2, hash, 32 / 4);
 	return hash_target_check_v(hash2, target);

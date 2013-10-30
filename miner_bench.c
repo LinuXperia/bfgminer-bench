@@ -10871,46 +10871,71 @@ retry:
 	return 0;
 }
 #endif
-void my_print(char *data[], int length);
+
+void my_print(uint8_t *data, int length) {
+	printf("DEBUG: data = ");
+	for(int i=0; i<length; i++) {
+		printf("%3x", (unsigned int)(data[i]));
+	}
+	printf("\n\n");
+}
+
 int main(int argc, char *argv[])
 {
-	printf("starting my miner_bench main :)\n");
+	printf("starting my miner_bench main \n");
 
 	struct work *work = calloc(1, sizeof(struct work));
 	if (unlikely(!work))
 		quit(1, "Failed to calloc work in make_work");
 
+	// setup block 125552 (see: https://en.bitcoin.it/wiki/Block_hashing_algorithm)
+
 	unsigned char *data = work->data;
+	my_print(data,80); printf("setting %s\n", "ver");
 	// ver
 	data[0] = 1;
+	//data[1] = 0xff;
+	my_print(data,80); printf("setting %s\n", "hash1");
+
 	// hashPrevBlock
-/*
-	hex2bin(&data[0+4], "81cd02ab7e569e8bcd9317e2fe99f2de44d49ab2b8851ba4a308000000000000", 32);
+//	hex2bin(&data[0+4], "81cd02ab7e569e8bcd9317e2fe99f2de44d49ab2b8851ba4a308000000000000", 32);
+	hex2bin(&data[0+4], "00000000000008a3a41b85b8b29ad444def299fee21793cd8b9e567eab02cd81", 32);
+	my_print(data,80); printf("setting %s\n", "hash2");
+
 	// hashMerkleRoot
-	hex2bin(&data[0+4+32], "e320b6c2fffc8d750423db8b1eb942ae710e951ed797f7affc8892b0f1fc122b", 32);
+//	hex2bin(&data[0+4+32], "e320b6c2fffc8d750423db8b1eb942ae710e951ed797f7affc8892b0f1fc122b", 32);
+	hex2bin(&data[0+4+32], "2b12fcf1b09288fcaff797d71e950e71ae42b91e8bdb2304758dfcffc2b620e3", 32);
+	my_print(data,80); printf("setting %s\n", "time");
+
 	// time
-	hex2bin(&data[0+4+32+32], "c7f5d74d", 4);
+//	hex2bin(&data[0+4+32+32], "c7f5d74d", 4);  // klopt helemaal niks van??
+	hex2bin(&data[0+4+32+32], "4dd7f5c7", 4);
+	my_print(data,80); printf("setting %s\n", "bits");
 	// bits
-	hex2bin(&data[0+4+32+32+4], "f2b9441a", 4);
-*/
+//	hex2bin(&data[0+4+32+32+4], "f2b9441a", 4);
+	hex2bin(&data[0+4+32+32+4], "1a44b9f2", 4);
+
 	uint32_t correct_nonce = 2504433986;
 
-	work->blk.nonce = correct_nonce - 1000;
-	//calc_midstate(work);
+	work->blk.nonce = /*htole32 */(correct_nonce - 1);
+	my_print(data,80); printf("setting %s\n", "midstate?");
+
+	calc_midstate(work);
 
 	my_print(data,80);
 
-	int64_t res = cpu_drv.scanhash(NULL,work, correct_nonce+ 1*1024*100);
+	printf("work->target: \n");
+	my_print(work->target,32);
+	hex2bin(work->target, "1dbd981fe6985776b644b173a4d0385ddc1aa2a829688d1e0100000000000000", 32);
+	printf("setting it work->target: \n");
+	my_print(work->target,32);
+
+
+	int64_t res = cpu_drv.scanhash(NULL,work, correct_nonce+ 100*1024*100);
 	printf("cpu_scanhash returned with: %d\n", res);
 	
 	uint32_t ver = 1;
 	
 }
 
-void my_print(char *data[], int length) {
-	printf("DEBUG: data = ");
-	for(int i=0; i<length; i++) {
-		printf("%2x", data[i]);
-	}
-	printf("\n");
-}
+

@@ -49,6 +49,8 @@ const uint32_t sha256_init_sse2[8]__asm__("sha256_init_sse2")__attribute__((alig
 __m128i g_4sha256_k[64];
 __m128i sha256_consts_m128i[64]__asm__("sha256_consts_m128i")__attribute__((aligned(0x1000)));
 
+void my_print(uint8_t *data, int length); // defined in miner_bench.c
+
 bool scanhash_sse2_64(struct thr_info*thr, const unsigned char *pmidstate,
 	unsigned char *pdata,
 	unsigned char *phash1, unsigned char *phash,
@@ -66,6 +68,7 @@ bool scanhash_sse2_64(struct thr_info*thr, const unsigned char *pmidstate,
     int i;
 	printf("inside scanhash_sse2_64 \n");
 	printf("  called with: nonce %u, max_nonce %u\n", nonce, max_nonce);
+	my_print(pdata,80);
 	pdata += 64;
 
     /* For debugging */
