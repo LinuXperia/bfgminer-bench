@@ -834,6 +834,13 @@ CPUSearch:
 
 	/* scan nonces for a proof-of-work hash */
 	{
+		printf("max_nonce: %i, last_nonce %i\n", max_nonce, last_nonce);
+		printf("sha data: ");
+		int i;
+		for(i=0; i<128;i++) {
+			printf("%02x", work->data[i]);
+		}
+		printf("\n");
 		sha256_func func = sha256_funcs[opt_algo];
 		rc = (*func)(
 			thr,
